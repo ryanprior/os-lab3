@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# procs: Reads a stream of processes on stdin, sanitizes them for a
+# specified scheduler, sorts and prints them.
+
+# Get the directory this script is in
+dir="$(dirname $0)"
+
+# Fail with a message if the first argument isn't a valid filter
+filter="$dir/$1-filter.awk"
+if [[ ! -e "$filter" ]]; then
+    echo "procs: no such filter: $1"
+    exit 1
+fi
+
+# Filter and sort the stream of processes on stdin
+# Sort order: arrival -> priority -> pid
+awk -f "$dir/procs.awk" \
+    -f "$filter" \
+    | sort -n -k3 -k4r -k1
