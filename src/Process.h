@@ -60,6 +60,7 @@ public:
   {}
   void run();
 protected:
+  virtual std::string ToString() const;
   proc_t m_deadline;   // last cycle this process is allowed to run
 };
 
@@ -75,6 +76,7 @@ public:
   {}
   void run();
 protected:
+  virtual std::string ToString() const;
   proc_t m_io;         // length of i/o in cycles (0 if no i/o)
 };
 
