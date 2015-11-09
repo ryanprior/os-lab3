@@ -2,6 +2,8 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
+#include <iostream>
+#include <string>
 typedef unsigned int proc_t;
 
 class Process {
@@ -16,8 +18,10 @@ public:
       m_priority(priority),
       m_pc(0)
   {}
-  virtual void run();
+  void run();
+  friend std::ostream &operator<<(std::ostream &out, const Process &proc);
 protected:
+  virtual std::string ToString() const;
   proc_t m_pid;        // process id for external reference
   proc_t m_burst;      // total run time
   proc_t m_arrival;    // clock cycle of arrival
@@ -34,7 +38,13 @@ public:
     : Process(pid, burst, arrival, priority),
       m_last_cycle(0)
   {}
+  ProcessMFQS()
+    : Process(0,0,0,0),
+      m_last_cycle(0)
+  {}
+  void run();
 protected:
+  virtual std::string ToString() const;
   proc_t m_last_cycle; // last cycle this process spent on the cpu
 };
 
@@ -48,6 +58,7 @@ public:
     : Process(pid, burst, arrival, priority),
       m_deadline(deadline)
   {}
+  void run();
 protected:
   proc_t m_deadline;   // last cycle this process is allowed to run
 };
@@ -62,6 +73,7 @@ public:
     : Process(pid, burst, arrival, priority),
       m_io(io)
   {}
+  void run();
 protected:
   proc_t m_io;         // length of i/o in cycles (0 if no i/o)
 };
