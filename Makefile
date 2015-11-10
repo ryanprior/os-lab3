@@ -16,7 +16,7 @@ build/%.o: src/%.cpp build
 
 
 # dummy test binary
-$(TEST_BIN): build/main.o build/Process.o
+$(TEST_BIN): build/main.o build/Process.o build/Simulator.o
 	@mkdir -p bin
 	$(CC) $(CFLAGS) -o $@ $^
 
