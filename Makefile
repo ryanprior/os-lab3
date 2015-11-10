@@ -1,6 +1,7 @@
 CC=g++
 DEBUG_FLAGS=-ggdb3
-CFLAGS=-Wall $(DEBUG_FLAGS)
+WARN_FLAGS=-Wall -Wno-unused-local-typedefs
+CFLAGS=$(WARN_FLAGS) $(DEBUG_FLAGS)
 TEST_BIN=bin/test
 
 .PHONY: all build
