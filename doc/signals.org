@@ -1,0 +1,39 @@
+#+TITLE: Overview of objects and signals
+
+* Objects
+  - Process
+  - Scheduler
+  - Simulator
+
+* Signals
+  - Simulation begins
+  - Simulation faults (RTS only)
+  - Simulation ends
+  - Process arrives
+  - Process runs (for how long?)
+  - Process time quantum expires
+  - Process does I/O (for how long? WHS only)
+  - Process aging timer expires (MFQS or WHS)
+  - Process misses deadline (RTS only)
+  - Process exits
+  - Process changes priority (WHS only)
+  - Process changes queues (MFQS only)
+
+#+CAPTION: Table of signals by object class
+#+NAME:    table:signals
+| scheduler | signal                   | belongs to | parameters |
+|-----------+--------------------------+------------+------------|
+| all       | proc runs                | process    | how long?  |
+| all       | proc exits               | process    |            |
+| mfqs, whs | proc tq expires          | process    |            |
+| rts       | proc misses deadline     | process    |            |
+| whs       | proc does i/o            | process    | how long?  |
+| whs       | proc changes priority    | process    | to what?   |
+|-----------+--------------------------+------------+------------|
+| mfqs      | proc changes queue       | scheduler  | to which?  |
+| mfqs, whs | proc aging timer expires | scheduler  |            |
+|-----------+--------------------------+------------+------------|
+| all       | sim begins               | simulator  |            |
+| all       | sim ends                 | simulator  |            |
+| all       | proc arrives             | simulator  |            |
+| rts       | sim faults               | simulator  |            |

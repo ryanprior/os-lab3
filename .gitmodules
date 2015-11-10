@@ -1,0 +1,3 @@
+[submodule "lib/Signals"]
+	path = lib/Signals
+	url = git@github.com:pbhogan/Signals.git
