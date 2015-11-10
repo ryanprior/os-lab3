@@ -21,6 +21,9 @@ const std::string Process::ToString() const {
 inline const proc_t& Process::pid() const {
   return this->m_pid;
 }
+inline const proc_t& Process::arrival() const {
+  return this->m_arrival;
+}
 
 
 /*

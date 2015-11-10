@@ -26,6 +26,7 @@ public:
   Signal0<> proc_exit;       // Signals when the process exits.
   virtual void Run(proc_t time_q, proc_t cpu_time) = 0;
   inline const proc_t& pid() const;
+  inline const proc_t& arrival() const;
   friend std::ostream &operator<<(std::ostream &out, const Process &proc);
 protected:
   virtual const std::string ToString() const;
