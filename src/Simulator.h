@@ -16,6 +16,7 @@ public:
       m_cpu_time(0),
       m_next_arrival(NULL)
   {}
+  virtual ~Simulator() {}
   Signal0<> sim_begins; // Signals at the beginning of a simulation.
   Signal0<> sim_ends;   // Signals at the end of a simulation.
   Signal1<proc_t> sim_proc_arrives;  // Signals with pid when the
@@ -46,6 +47,7 @@ public:
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {} // TODO set up queue structures
+  virtual ~SimulatorMQFS() {}
 protected:
   virtual ProcessMFQS *read_proc();
 };
@@ -58,6 +60,7 @@ public:
     : Simulator(proc_stream),
       m_type(type)
   {}
+  virtual ~SimulatorRTS() {}
   Signal0<> sim_faults; // Signals when a process cannot meet its
                         // deadline during hard real-time operation.
 protected:
@@ -72,6 +75,7 @@ public:
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {}
+  virtual ~SimulatorWHS() {}
 protected:
   virtual ProcessWHS *read_proc();
 };

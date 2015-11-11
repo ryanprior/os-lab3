@@ -21,6 +21,7 @@ public:
       m_priority(priority),
       m_pc(0)
   {}
+  virtual ~Process() {}
   Signal1<proc_t> proc_run;  // Signals with total run time when the
                              // process runs.
   Signal0<> proc_exit;       // Signals when the process exits.
@@ -65,6 +66,7 @@ public:
     : Process(pid, burst, arrival, priority),
       ProcAge()
   {}
+  virtual ~ProcessMFQS() {}
   virtual void Run(proc_t time_q, proc_t cpu_time);
 protected:
   virtual const std::string ToString() const;
@@ -81,6 +83,7 @@ public:
     : Process(pid, burst, arrival, priority),
       m_deadline(deadline)
   {}
+  virtual ~ProcessRTS() {}
   Signal0<> proc_missed_deadline; // Signals when process misses its
                                   // deadline.
   virtual void Run(proc_t time_q, proc_t cpu_time);
@@ -101,6 +104,7 @@ public:
       ProcAge(),
       m_io(io)
   {}
+  virtual ~ProcessWHS() {}
   Signal1<proc_t> proc_does_io; // Signals with length of I/O when the
                                 // process begins doing I/O.
   Signal1<proc_t> proc_changes_priority; // Signals with new priority.

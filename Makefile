@@ -4,7 +4,7 @@ WARN_FLAGS=-Wall -Wno-unused-local-typedefs
 CFLAGS=$(WARN_FLAGS) $(DEBUG_FLAGS)
 TEST_BIN=bin/test
 
-.PHONY: all build
+.PHONY: all
 
 all: $(TEST_BIN)
 build/%.o: src/%.cpp src/%.h
