@@ -4,15 +4,15 @@
 #include "../lib/Signals/Signal.h"
 #include "Process.h"
 #include <vector>
-#include <fstream>
+#include <iostream>
 using namespace Gallant;
 
 
 template <typename T>
 class Simulator {
 public:
-  Simulator(std::ifstream &proc_stream)
-    : m_proc_stream(&proc_stream),
+  Simulator(std::istream &proc_stream)
+    : m_proc_stream(proc_stream),
       m_cpu_time(0),
       m_next_arrival(NULL)
   {}
@@ -24,7 +24,7 @@ public:
                                      // arrival time and it is added
                                      // to the simulation.
 protected:
-  std::ifstream * const m_proc_stream;
+  std::istream &m_proc_stream;
   proc_t m_cpu_time;
   virtual T *read_proc() = 0;
   T *m_next_arrival;
@@ -43,7 +43,7 @@ protected:
 
 class SimulatorMQFS : public Simulator<ProcessMFQS>, SimTimeQuantum {
 public:
-  SimulatorMQFS(std::ifstream &proc_stream, proc_t num_queues, proc_t time_q)
+  SimulatorMQFS(std::istream &proc_stream, proc_t num_queues, proc_t time_q)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {} // TODO set up queue structures
@@ -56,7 +56,7 @@ protected:
 class SimulatorRTS : public Simulator<ProcessRTS> {
 public:
   enum Type { HARD, SOFT };
-  SimulatorRTS(std::ifstream &proc_stream, Type type)
+  SimulatorRTS(std::istream &proc_stream, Type type)
     : Simulator(proc_stream),
       m_type(type)
   {}
@@ -71,7 +71,7 @@ protected:
 
 class SimulatorWHS : public Simulator<ProcessWHS>, SimTimeQuantum {
 public:
-  SimulatorWHS(std::ifstream &proc_stream, proc_t time_q)
+  SimulatorWHS(std::istream &proc_stream, proc_t time_q)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {}
