@@ -22,9 +22,9 @@ public:
       m_pc(0)
   {}
   virtual ~Process() {}
-  Signal1<proc_t> proc_run;  // Signals with total run time when the
-                             // process runs.
-  Signal0<> proc_exit;       // Signals when the process exits.
+  Signal2<Process*, proc_t> runs;  // Signals with total run time when
+                                   // the process runs.
+  Signal1<Process*> exits;         // Signals on exit.
   virtual void Run(proc_t time_q, proc_t cpu_time) = 0;
   inline const proc_t& pid() const;
   inline const proc_t& arrival() const;
@@ -53,7 +53,8 @@ protected:
 
 class ProcTimeQuantum {
 public:
-  Signal0<> proc_tq_expired;
+  Signal1<Process*> tq_expires; // Signals when the proc runs to the
+                                // end of its given time quantum.
 };
 
 
@@ -84,8 +85,8 @@ public:
       m_deadline(deadline)
   {}
   virtual ~ProcessRTS() {}
-  Signal0<> proc_missed_deadline; // Signals when process misses its
-                                  // deadline.
+  Signal1<Process*> misses_deadline; // Signals when process misses
+                                     // its deadline.
   virtual void Run(proc_t time_q, proc_t cpu_time);
 protected:
   virtual const std::string ToString() const;
@@ -105,9 +106,10 @@ public:
       m_io(io)
   {}
   virtual ~ProcessWHS() {}
-  Signal1<proc_t> proc_does_io; // Signals with length of I/O when the
-                                // process begins doing I/O.
-  Signal1<proc_t> proc_changes_priority; // Signals with new priority.
+  Signal2<Process*, proc_t> does_io; // Signals with duration when the
+                                     // process begins doing I/O.
+  Signal2<Process*, proc_t> changes_priority; // Signals with new
+                                              // priority.
   virtual void Run(proc_t time_q, proc_t cpu_time);
   void set_priority(proc_t new_priority);
 protected:

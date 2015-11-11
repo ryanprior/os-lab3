@@ -45,13 +45,13 @@ void ProcessMFQS::Run(proc_t time_q, proc_t cpu_time) {
   if(run_time > time_q) {
     run_time = time_q;
   }
-  this->proc_run(run_time);
+  this->runs(this, run_time);
   this->m_pc += run_time;
   this->reset_last_cycle(cpu_time + run_time);
   if(this->m_pc == this->m_burst) {
-    this->proc_exit();
+    this->exits(this);
   } else {
-    this->proc_tq_expired();
+    this->tq_expires(this);
   }
 }
 const std::string ProcessMFQS::ToString() const {
@@ -71,16 +71,16 @@ void ProcessRTS::Run(proc_t time_q, proc_t cpu_time) {
     run_time = time_q;
   }
   if(cpu_time + run_time <= this->m_deadline) {
-    this->proc_run(run_time);
+    this->runs(this, run_time);
     this->m_pc += run_time;
     if(this->m_pc == this->m_burst) {
-      this->proc_exit();
+      this->exits(this);
     }
   } else {
     run_time = this->m_deadline - cpu_time;
-    this->proc_run(run_time);
+    this->runs(this, run_time);
     this->m_pc += run_time;
-    this->proc_missed_deadline();
+    this->misses_deadline(this);
   }
 }
 const std::string ProcessRTS::ToString() const {
@@ -101,24 +101,24 @@ void ProcessWHS::Run(proc_t time_q, proc_t cpu_time) {
   }
   if(this->m_io > 0 && run_time >= time_q-1) {
     run_time = time_q - 1;
-    this->proc_run(run_time);
+    this->runs(this, run_time);
     this->m_pc += run_time;
     this->reset_last_cycle(cpu_time + run_time);
-    this->proc_does_io(this->m_io);
+    this->does_io(this, this->m_io);
   } else {
-    this->proc_run(run_time);
+    this->runs(this, run_time);
     this->m_pc += run_time;
     this->reset_last_cycle(cpu_time + run_time);
     if(this->m_pc == this->m_burst) {
-      this->proc_exit();
+      this->exits(this);
     } else {
-      this->proc_tq_expired();
+      this->tq_expires(this);
     }
   }
 }
 void ProcessWHS::set_priority(proc_t new_priority) {
   this->m_priority = new_priority;
-  this->proc_changes_priority(new_priority);
+  this->changes_priority(this, new_priority);
 }
 const std::string ProcessWHS::ToString() const {
   std::stringstream result;

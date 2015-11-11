@@ -7,6 +7,9 @@
 #include <iostream>
 using namespace Gallant;
 
+template <typename T> class Simulator;
+typedef Simulator<Process> GenericSim;
+
 
 template <typename T>
 class Simulator {
@@ -17,12 +20,12 @@ public:
       m_next_arrival(NULL)
   {}
   virtual ~Simulator() {}
-  Signal0<> sim_begins; // Signals at the beginning of a simulation.
-  Signal0<> sim_ends;   // Signals at the end of a simulation.
-  Signal1<proc_t> sim_proc_arrives;  // Signals with pid when the
-                                     // clock reaches a process's
-                                     // arrival time and it is added
-                                     // to the simulation.
+  Signal1<GenericSim*> begins; // Signals at the beginning of a
+                               // simulation.
+  Signal1<GenericSim*> ends;   // Signals at the end of a simulation.
+  Signal2<GenericSim*, Process*> proc_arrives;
+     // Signals with pid when the clock reaches a process's arrival
+     // time and it is added to the simulation.
 protected:
   std::istream &m_proc_stream;
   proc_t m_cpu_time;
@@ -42,9 +45,12 @@ protected:
 };
 
 
-class SimulatorMQFS : public Simulator<ProcessMFQS>, SimTimeQuantum {
+class SimulatorMQFS : public Simulator<ProcessMFQS>,
+                      SimTimeQuantum {
 public:
-  SimulatorMQFS(std::istream &proc_stream, proc_t num_queues, proc_t time_q)
+  SimulatorMQFS(std::istream &proc_stream,
+                proc_t num_queues,
+                proc_t time_q)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {} // TODO set up queue structures
@@ -62,8 +68,9 @@ public:
       m_type(type)
   {}
   virtual ~SimulatorRTS() {}
-  Signal0<> sim_faults; // Signals when a process cannot meet its
-                        // deadline during hard real-time operation.
+  Signal1<SimulatorRTS*> faults; // Signals when a process cannot meet
+                                 // its deadline during hard real-time
+                                 // operation.
 protected:
   virtual ProcessRTS *read_proc();
   const Type m_type;
