@@ -27,6 +27,7 @@ protected:
   std::istream &m_proc_stream;
   proc_t m_cpu_time;
   virtual T *read_proc() = 0;
+  friend int main(int argc, char **argv);
   T *m_next_arrival;
 };
 
