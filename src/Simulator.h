@@ -4,6 +4,7 @@
 #include "../lib/Signals/Signal.h"
 #include "Process.h"
 #include <vector>
+#include <queue>
 #include <iostream>
 using namespace Gallant;
 
@@ -14,7 +15,7 @@ typedef Simulator<Process> GenericSim;
 template <typename T>
 class Simulator {
 public:
-  Simulator(std::istream &proc_stream)
+  Simulator(std::istream &proc_stream = std::cin)
     : m_proc_stream(proc_stream),
       m_cpu_time(0),
       m_next_arrival(NULL)
@@ -29,9 +30,10 @@ public:
 protected:
   std::istream &m_proc_stream;
   proc_t m_cpu_time;
-  virtual T *read_proc() = 0;
-  friend int main(int argc, char **argv);
   T *m_next_arrival;
+  virtual T *read_proc() = 0;
+  virtual void add(T *proc) = 0;
+  friend int main(int argc, char **argv);
 };
 
 
@@ -48,22 +50,25 @@ protected:
 class SimulatorMQFS : public Simulator<ProcessMFQS>,
                       SimTimeQuantum {
 public:
-  SimulatorMQFS(std::istream &proc_stream,
-                proc_t num_queues,
-                proc_t time_q)
+  SimulatorMQFS(proc_t num_queues,
+                proc_t time_q,
+                std::istream &proc_stream = std::cin)
     : Simulator(proc_stream),
-      SimTimeQuantum(time_q)
-  {} // TODO set up queue structures
+      SimTimeQuantum(time_q),
+      m_queues(num_queues)
+  {}
   virtual ~SimulatorMQFS() {}
 protected:
   virtual ProcessMFQS *read_proc();
+  virtual void add(ProcessMFQS *proc);
+  std::vector<std::queue<ProcessMFQS*> > m_queues;
 };
 
 
 class SimulatorRTS : public Simulator<ProcessRTS> {
 public:
   enum Type { HARD, SOFT };
-  SimulatorRTS(std::istream &proc_stream, Type type)
+  SimulatorRTS(Type type, std::istream &proc_stream = std::cin)
     : Simulator(proc_stream),
       m_type(type)
   {}
@@ -73,19 +78,21 @@ public:
                                  // operation.
 protected:
   virtual ProcessRTS *read_proc();
+  virtual void add(ProcessRTS *proc);
   const Type m_type;
 };
 
 
 class SimulatorWHS : public Simulator<ProcessWHS>, SimTimeQuantum {
 public:
-  SimulatorWHS(std::istream &proc_stream, proc_t time_q)
+  SimulatorWHS(proc_t time_q, std::istream &proc_stream = std::cin)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {}
   virtual ~SimulatorWHS() {}
 protected:
   virtual ProcessWHS *read_proc();
+  virtual void add(ProcessWHS *proc);
 };
 
 #endif

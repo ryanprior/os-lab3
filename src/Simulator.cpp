@@ -13,6 +13,10 @@ ProcessMFQS *SimulatorMQFS::read_proc() {
     return NULL;
   }
 }
+void SimulatorMQFS::add(ProcessMFQS *proc) {
+  this->m_queues[0].push(proc);
+  this->proc_arrives((GenericSim*)this, proc);
+}
 
 
 /*
@@ -27,6 +31,9 @@ ProcessRTS *SimulatorRTS::read_proc() {
     return NULL;
   }
 }
+void SimulatorRTS::add(ProcessRTS *proc) {
+
+}
 
 
 /*
@@ -40,4 +47,7 @@ ProcessWHS *SimulatorWHS::read_proc() {
   } else {
     return NULL;
   }
+}
+void SimulatorWHS::add(ProcessWHS *proc) {
+
 }
