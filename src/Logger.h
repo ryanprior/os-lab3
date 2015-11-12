@@ -9,14 +9,29 @@ using namespace Gallant;
 
 class Logger {
 public:
-  Logger(std::ostream &out, SimulatorMQFS &sim)
+  Logger(SimulatorMQFS *sim, std::ostream &out = std::cout)
     : m_out(out)
   {
-    sim.begins.Connect(this, &Logger::begin);
-    sim.ends.Connect(this, &Logger::end);
-    sim.proc_arrives.Connect(this, &Logger::arrival);
+    this->listen_to((GenericSim*)sim);
+  }
+  Logger(SimulatorRTS *sim, std::ostream &out = std::cout)
+    : m_out(out)
+  {
+    this->listen_to((GenericSim*)sim);
+    sim->faults.Connect(this, &Logger::fault);
+  }
+  Logger(SimulatorWHS *sim, std::ostream &out = std::cout)
+    : m_out(out)
+  {
+    this->listen_to((GenericSim*)sim);
   }
 private:
+  void listen_to(GenericSim *sim)
+  {
+    sim->begins.Connect(this, &Logger::begin);
+    sim->ends.Connect(this, &Logger::end);
+    sim->proc_arrives.Connect(this, &Logger::arrival);
+  }
   void listen_to(ProcessMFQS *proc);
   void listen_to(ProcessRTS *proc);
   void listen_to(ProcessWHS *proc);
@@ -31,7 +46,7 @@ private:
   void begin(GenericSim *sim);
   void end(GenericSim *sim);
   void arrival(GenericSim *sim, Process *proc);
-  void fault(GenericSim *sim);
+  void fault(SimulatorRTS *sim);
   std::ostream &m_out;
 };
 
