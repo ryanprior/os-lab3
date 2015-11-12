@@ -4,7 +4,7 @@
 #include "../lib/Signals/Signal.h"
 #include "Process.h"
 #include <vector>
-#include <queue>
+#include <deque>
 #include <iostream>
 using namespace Gallant;
 
@@ -61,7 +61,7 @@ public:
 protected:
   virtual ProcessMFQS *read_proc();
   virtual void add(ProcessMFQS *proc);
-  std::vector<std::queue<ProcessMFQS*> > m_queues;
+  std::vector<std::deque<ProcessMFQS*> > m_queues;
 };
 
 

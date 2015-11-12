@@ -14,7 +14,7 @@ ProcessMFQS *SimulatorMQFS::read_proc() {
   }
 }
 void SimulatorMQFS::add(ProcessMFQS *proc) {
-  this->m_queues[0].push(proc);
+  this->m_queues[0].push_back(proc);
   this->proc_arrives((GenericSim*)this, proc);
 }
 
