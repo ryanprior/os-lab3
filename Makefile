@@ -1,4 +1,4 @@
-CC=g++
+CC=g++ -std=c++11
 DEBUG_FLAGS=-ggdb3
 WARN_FLAGS=-Wall -Wno-unused-local-typedefs
 CFLAGS=$(WARN_FLAGS) $(DEBUG_FLAGS)
@@ -22,7 +22,7 @@ $(SIGNALS):
 
 
 # dummy test binary
-$(TEST_BIN): build/main.o build/Process.o build/Simulator.o
+$(TEST_BIN): build/main.o build/Process.o build/Simulator.o build/Logger.o
 	@mkdir -p bin
 	$(CC) $(CFLAGS) -o $@ $^
 

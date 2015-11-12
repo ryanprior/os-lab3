@@ -1,5 +1,6 @@
 #include "Process.h"
 #include "Simulator.h"
+#include "Logger.h"
 #include <iostream>
 #include <algorithm>
 
@@ -14,21 +15,29 @@ int main(int argc, char **argv) {
     std::transform(type.begin(), type.end(), type.begin(), ::tolower);
     // Read in records and print their representations to stdout
     Simulator<Process> *sim;
+    Logger *logger;
     if(type == "mfqs") {
-      sim = (Simulator<Process>*)new SimulatorMQFS(cin, 0, 0);
+      auto s = new SimulatorMQFS(3, 10);
+      logger = new Logger(s);
+      sim = (Simulator<Process>*) s;
     } else if(type == "rts") {
-      sim = (Simulator<Process>*)new SimulatorRTS(cin, SimulatorRTS::HARD);
+      auto s = new SimulatorRTS(SimulatorRTS::HARD);
+      logger = new Logger(s);
+      sim = (Simulator<Process>*) s;
     } else if(type == "whs") {
-      sim = (Simulator<Process>*)new SimulatorWHS(cin, 0);
+      auto s = new SimulatorWHS(20);
+      logger = new Logger(s);
+      sim = (Simulator<Process>*) s;
     } else {
       cout << "unknown type: " << type << endl;
       exit(1);
     }
     while(sim->read_proc()) {
-      cout << *sim->m_next_arrival << endl;
-      delete sim->m_next_arrival;
+      cout << "read: " << *sim->m_next_arrival << endl;
+      sim->add(sim->m_next_arrival);
     }
     delete sim;
+    delete logger;
   }
   return 0;
 }
