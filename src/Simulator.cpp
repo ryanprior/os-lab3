@@ -3,9 +3,9 @@
 
 
 /*
- * SimulatorMQFS
+ * SimulatorMFQS
  */
-SimulatorMQFS::~SimulatorMQFS() {
+SimulatorMFQS::~SimulatorMFQS() {
   for(auto i=this->m_queues.begin(); i != this->m_queues.end(); ++i) {
     while(!i->empty()) {
       delete i->front();
@@ -13,7 +13,7 @@ SimulatorMQFS::~SimulatorMQFS() {
     }
   }
 }
-ProcessMFQS *SimulatorMQFS::read_proc() {
+ProcessMFQS *SimulatorMFQS::read_proc() {
   proc_t pid, bst, arr, pri;
   if(this->m_proc_stream >> pid >> bst >> arr >> pri) {
     this->m_next_arrival = new ProcessMFQS(pid, bst, arr, pri);
@@ -22,7 +22,7 @@ ProcessMFQS *SimulatorMQFS::read_proc() {
     return NULL;
   }
 }
-void SimulatorMQFS::add(ProcessMFQS *proc) {
+void SimulatorMFQS::add(ProcessMFQS *proc) {
   this->m_queues[0].push_back(proc);
   this->proc_arrives((GenericSim*)this, proc);
 }

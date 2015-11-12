@@ -47,17 +47,17 @@ protected:
 };
 
 
-class SimulatorMQFS : public Simulator<ProcessMFQS>,
+class SimulatorMFQS : public Simulator<ProcessMFQS>,
                       SimTimeQuantum {
 public:
-  SimulatorMQFS(proc_t num_queues,
+  SimulatorMFQS(proc_t num_queues,
                 proc_t time_q,
                 std::istream &proc_stream = std::cin)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q),
       m_queues(num_queues)
   {}
-  virtual ~SimulatorMQFS();
+  virtual ~SimulatorMFQS();
 protected:
   virtual ProcessMFQS *read_proc();
   virtual void add(ProcessMFQS *proc);

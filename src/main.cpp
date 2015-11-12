@@ -17,7 +17,7 @@ int main(int argc, char **argv) {
     Simulator<Process> *sim;
     Logger *logger;
     if(type == "mfqs") {
-      auto s = new SimulatorMQFS(3, 10);
+      auto s = new SimulatorMFQS(3, 10);
       logger = new Logger(s);
       sim = (Simulator<Process>*) s;
     } else if(type == "rts") {

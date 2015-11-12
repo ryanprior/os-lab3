@@ -9,7 +9,7 @@ using namespace Gallant;
 
 class Logger {
 public:
-  Logger(SimulatorMQFS *sim, std::ostream &out = std::cout)
+  Logger(SimulatorMFQS *sim, std::ostream &out = std::cout)
     : m_out(out)
   {
     this->listen_to((GenericSim*)sim);
