@@ -1,9 +1,18 @@
 #include "Simulator.h"
+#include <algorithm>
 
 
 /*
  * SimulatorMQFS
  */
+SimulatorMQFS::~SimulatorMQFS() {
+  for(auto i=this->m_queues.begin(); i != this->m_queues.end(); ++i) {
+    while(!i->empty()) {
+      delete i->front();
+      i->pop_front();
+    }
+  }
+}
 ProcessMFQS *SimulatorMQFS::read_proc() {
   proc_t pid, bst, arr, pri;
   if(this->m_proc_stream >> pid >> bst >> arr >> pri) {

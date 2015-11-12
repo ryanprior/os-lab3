@@ -57,7 +57,7 @@ public:
       SimTimeQuantum(time_q),
       m_queues(num_queues)
   {}
-  virtual ~SimulatorMQFS() {}
+  virtual ~SimulatorMQFS();
 protected:
   virtual ProcessMFQS *read_proc();
   virtual void add(ProcessMFQS *proc);
