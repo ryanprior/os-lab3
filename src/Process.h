@@ -26,8 +26,8 @@ public:
                                    // the process runs.
   Signal1<Process*> exits;         // Signals on exit.
   virtual void Run(proc_t time_q, proc_t cpu_time) = 0;
-  inline const proc_t& pid() const;
-  inline const proc_t& arrival() const;
+  inline const proc_t& pid() const { return this->m_pid; }
+  inline const proc_t& arrival() const { return this->m_arrival; }
   friend std::ostream &operator<<(std::ostream &out, const Process &proc);
 protected:
   virtual const std::string ToString() const;
