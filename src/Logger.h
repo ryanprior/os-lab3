@@ -1,7 +1,7 @@
 #ifndef LOGGER_H
 #define LOGGER_H
 
-#include "../lib/Signals/Signal.h"
+#include <Signal.h>
 #include "Process.h"
 #include "Simulator.h"
 #include <iostream>
