@@ -1,0 +1,12 @@
+AC_INIT([os-lab3], [1.0])
+AM_INIT_AUTOMAKE([foreign -Wall])
+
+AC_LANG([C++])
+AX_CXX_COMPILE_STDCXX_11
+AC_PROG_CXX
+
+
+AC_CONFIG_HEADERS([config.h])
+AC_CONFIG_FILES([Makefile])
+
+AC_OUTPUT
