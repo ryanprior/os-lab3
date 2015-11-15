@@ -1,7 +1,8 @@
 CC=g++ -std=c++11
 DEBUG_FLAGS=-ggdb3
+INCLUDE_FLAGS=-Ilib/Signals
 WARN_FLAGS=-Wall -Wno-unused-local-typedefs
-CFLAGS=$(WARN_FLAGS) $(DEBUG_FLAGS)
+CFLAGS=$(WARN_FLAGS) $(DEBUG_FLAGS) $(INCLUDE_FLAGS)
 TEST_BIN=bin/test
 SIGNALS=lib/Signals/Signal.h
 
@@ -13,7 +14,7 @@ build/%.o: src/%.cpp src/%.h $(SIGNALS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 build/%.o: src/%.cpp $(SIGNALS)
 	@mkdir -p build
-	$(CC) $(CLFLAGS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 
 # libs

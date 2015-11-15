@@ -2,7 +2,7 @@
 #ifndef PROCESS_H
 #define PROCESS_H
 
-#include "../lib/Signals/Signal.h"
+#include <Signal.h>
 #include <iostream>
 #include <string>
 typedef unsigned int proc_t;

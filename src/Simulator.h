@@ -1,7 +1,7 @@
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
-#include "../lib/Signals/Signal.h"
+#include <Signal.h>
 #include "Process.h"
 #include <vector>
 #include <deque>
