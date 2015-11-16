@@ -16,10 +16,10 @@ build/Makefile: configure
 configure: configure.ac Makefile.am
 	autoreconf -is
 
-compile_commands.json: build/Makefile
-	bear -o ../compile_commands.json -- $(MAKE) -C build -Bk
+compile_commands.json: clean
+	bear -o compile_commands.json -- $(MAKE) -C build -k
 
-clean:
+clean: build/Makefile
 	$(MAKE) -C build clean
 
 clean-config:
