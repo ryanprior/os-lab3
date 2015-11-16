@@ -1,12 +1,12 @@
+// Simulator.h: object definitions for simulators
 #ifndef SIMULATOR_H
 #define SIMULATOR_H
 
-#include <Signal.h>
 #include "Process.h"
+#include <Signal.h>
 #include <vector>
 #include <deque>
 #include <iostream>
-using namespace Gallant;
 
 template <typename T> class Simulator;
 typedef Simulator<Process> GenericSim;
@@ -21,15 +21,14 @@ public:
       m_next_arrival(NULL)
   {}
   virtual ~Simulator() {}
-  Signal1<GenericSim*> begins; // Signals at the beginning of a
-                               // simulation.
-  Signal1<GenericSim*> ends;   // Signals at the end of a simulation.
-  Signal2<GenericSim*, Process*> proc_arrives;
-     // Signals with pid when the clock reaches a process's arrival
-     // time and it is added to the simulation.
+  Gallant::Signal1<GenericSim*> begins;
+  Gallant::Signal1<GenericSim*> ends;
+  Gallant::Signal2<GenericSim*, Process*> proc_arrives;
+    // Signals with pid when the clock reaches a process's arrival
+    // time and it is added to the simulation.
 protected:
   std::istream &m_proc_stream;
-  proc_t m_cpu_time;
+  uint m_cpu_time;
   T *m_next_arrival;
   virtual T *read_proc() = 0;
   virtual void add(T *proc) = 0;
@@ -39,19 +38,19 @@ protected:
 
 class SimTimeQuantum {
 public:
-  SimTimeQuantum(proc_t time_q)
+  SimTimeQuantum(uint time_q)
     : m_time_quantum(time_q)
   {}
 protected:
-  proc_t m_time_quantum;
+  uint m_time_quantum;
 };
 
 
 class SimulatorMFQS : public Simulator<ProcessMFQS>,
                       SimTimeQuantum {
 public:
-  SimulatorMFQS(proc_t num_queues,
-                proc_t time_q,
+  SimulatorMFQS(uint num_queues,
+                uint time_q,
                 std::istream &proc_stream = std::cin)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q),
@@ -73,9 +72,9 @@ public:
       m_type(type)
   {}
   virtual ~SimulatorRTS() {}
-  Signal1<SimulatorRTS*> faults; // Signals when a process cannot meet
-                                 // its deadline during hard real-time
-                                 // operation.
+  Gallant::Signal1<SimulatorRTS*> faults; // Signals when a process
+                                          // cannot meet its deadline
+                                          // during hard RT operation.
 protected:
   virtual ProcessRTS *read_proc();
   virtual void add(ProcessRTS *proc);
@@ -85,7 +84,7 @@ protected:
 
 class SimulatorWHS : public Simulator<ProcessWHS>, SimTimeQuantum {
 public:
-  SimulatorWHS(proc_t time_q, std::istream &proc_stream = std::cin)
+  SimulatorWHS(uint time_q, std::istream &proc_stream = std::cin)
     : Simulator(proc_stream),
       SimTimeQuantum(time_q)
   {}

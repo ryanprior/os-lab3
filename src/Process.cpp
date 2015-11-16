@@ -23,10 +23,10 @@ const std::string Process::ToString() const {
 /*
  * ProcAge
  */
-inline const proc_t& ProcAge::last_cycle() const {
+inline const uint& ProcAge::last_cycle() const {
   return this->m_last_cycle;
 }
-void ProcAge::reset_last_cycle(proc_t new_last_cycle) {
+void ProcAge::reset_last_cycle(uint new_last_cycle) {
   this->m_last_cycle = new_last_cycle;
 }
 
@@ -34,8 +34,8 @@ void ProcAge::reset_last_cycle(proc_t new_last_cycle) {
 /*
  * ProcessMFQS
  */
-void ProcessMFQS::Run(proc_t time_q, proc_t cpu_time) {
-  proc_t run_time = this->m_burst - this->m_pc;
+void ProcessMFQS::Run(uint time_q, uint cpu_time) {
+  uint run_time = this->m_burst - this->m_pc;
   if(run_time > time_q) {
     run_time = time_q;
   }
@@ -59,8 +59,8 @@ const std::string ProcessMFQS::ToString() const {
 /*
  * ProcessRTS
  */
-void ProcessRTS::Run(proc_t time_q, proc_t cpu_time) {
-  proc_t run_time = this->m_burst - this->m_pc;
+void ProcessRTS::Run(uint time_q, uint cpu_time) {
+  uint run_time = this->m_burst - this->m_pc;
   if(run_time > time_q) {
     run_time = time_q;
   }
@@ -88,8 +88,8 @@ const std::string ProcessRTS::ToString() const {
 /*
  * ProcessWHS
  */
-void ProcessWHS::Run(proc_t time_q, proc_t cpu_time) {
-  proc_t run_time = this->m_burst - this->m_pc;
+void ProcessWHS::Run(uint time_q, uint cpu_time) {
+  uint run_time = this->m_burst - this->m_pc;
   if(run_time > time_q) {
     run_time = time_q;
   }
@@ -110,7 +110,7 @@ void ProcessWHS::Run(proc_t time_q, proc_t cpu_time) {
     }
   }
 }
-void ProcessWHS::set_priority(proc_t new_priority) {
+void ProcessWHS::set_priority(uint new_priority) {
   this->m_priority = new_priority;
   this->changes_priority(this, new_priority);
 }
