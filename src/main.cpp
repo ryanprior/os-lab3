@@ -1,5 +1,6 @@
 #include "Process.h"
 #include "Simulator.h"
+#include "SchedulerMFQS.h"
 #include "Logger.h"
 #include <iostream>
 #include <algorithm>
@@ -14,30 +15,27 @@ int main(int argc, char **argv) {
     std::string type(argv[1]);
     std::transform(type.begin(), type.end(), type.begin(), ::tolower);
     // Read in records and print their representations to stdout
-    Simulator<Process> *sim;
-    Logger *logger;
     if(type == "mfqs") {
-      auto s = new SimulatorMFQS(3, 10);
-      logger = new Logger(s);
-      sim = (Simulator<Process>*) s;
+      uint num_queues = 3;
+      uint time_q = 10;
+      SchedulerMFQS scheduler(num_queues, time_q);
+      Simulator<ProcessMFQS> sim(scheduler);
+      Logger<ProcessMFQS> logger;
+      logger.listen_to(sim);
+      while(sim.read_proc()) {
+        cout << "read: " << sim.m_next_arrival << endl;
+        sim.add(sim.m_next_arrival);
+      }
     } else if(type == "rts") {
-      auto s = new SimulatorRTS(SimulatorRTS::HARD);
-      logger = new Logger(s);
-      sim = (Simulator<Process>*) s;
+      cout << "rts unimplemented ¯\\_(ツ)_/¯" << endl;
+      exit(1);
     } else if(type == "whs") {
-      auto s = new SimulatorWHS(20);
-      logger = new Logger(s);
-      sim = (Simulator<Process>*) s;
+      cout << "whs unimplemented ¯\\_(ツ)_/¯" << endl;
+      exit(1);
     } else {
       cout << "unknown type: " << type << endl;
       exit(1);
     }
-    while(sim->read_proc()) {
-      cout << "read: " << *sim->m_next_arrival << endl;
-      sim->add(sim->m_next_arrival);
-    }
-    delete sim;
-    delete logger;
   }
   return 0;
 }
