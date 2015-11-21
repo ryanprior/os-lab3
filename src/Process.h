@@ -12,7 +12,9 @@ public:
   explicit Process(uint pid,
                    uint burst,
                    uint arrival,
-                   uint priority)
+                   uint priority,
+                   uint deadline,
+                   uint io)
     : m_pid(pid),
       m_burst(burst),
       m_arrival(arrival),
@@ -62,8 +64,10 @@ public:
   ProcessMFQS(uint pid,
               uint burst,
               uint arrival,
-              uint priority)
-    : Process(pid, burst, arrival, priority),
+              uint priority,
+              uint deadline,
+              uint io)
+    : Process(pid, burst, arrival, priority, 0, 0),
       ProcAge()
   {}
   virtual ~ProcessMFQS() {}
@@ -79,8 +83,9 @@ public:
              uint burst,
              uint arrival,
              uint priority,
-             uint deadline)
-    : Process(pid, burst, arrival, priority),
+             uint deadline,
+             uint io)
+    : Process(pid, burst, arrival, priority, 0, 0),
       m_deadline(deadline)
   {}
   virtual ~ProcessRTS() {}
@@ -99,8 +104,9 @@ public:
              uint burst,
              uint arrival,
              uint priority,
+             uint deadline,
              uint io)
-    : Process(pid, burst, arrival, priority),
+    : Process(pid, burst, arrival, priority, 0, 0),
       ProcAge(),
       m_io(io)
   {}

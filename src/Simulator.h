@@ -3,95 +3,48 @@
 #define SIMULATOR_H
 
 #include "Process.h"
+#include "Scheduler.h"
 #include <Signal.h>
 #include <vector>
 #include <deque>
 #include <iostream>
 
-template <typename T> class Simulator;
-typedef Simulator<Process> GenericSim;
-
 
-template <typename T>
+template <typename process_T>
 class Simulator {
 public:
-  Simulator(std::istream &proc_stream = std::cin)
+  Simulator(Scheduler<process_T> &scheduler, std::istream &proc_stream = std::cin)
     : m_proc_stream(proc_stream),
       m_cpu_time(0),
-      m_next_arrival(NULL)
+      m_next_arrival(NULL),
+      m_scheduler(scheduler)
   {}
-  virtual ~Simulator() {}
-  Gallant::Signal1<GenericSim*> begins;
-  Gallant::Signal1<GenericSim*> ends;
-  Gallant::Signal2<GenericSim*, Process*> proc_arrives;
+  ~Simulator() {}
+  Gallant::Signal1<Simulator<process_T>*> begins;
+  Gallant::Signal1<Simulator<process_T>*> ends;
+  Gallant::Signal2<Simulator<process_T>*, process_T*> proc_arrives;
     // Signals with pid when the clock reaches a process's arrival
     // time and it is added to the simulation.
 protected:
   std::istream &m_proc_stream;
   uint m_cpu_time;
-  T *m_next_arrival;
-  virtual T *read_proc() = 0;
-  virtual void add(T *proc) = 0;
+  process_T *m_next_arrival;
+  Scheduler<process_T> &m_scheduler;
+  process_T *read_proc()
+  {
+    uint pid, bst, arr, pri, dln, io;
+    if(this->m_proc_stream >> pid >> bst >> arr >> pri >> dln >> io) {
+      this->m_next_arrival = new process_T(pid, bst, arr, pri, dln, io);
+      return this->m_next_arrival;
+    } else {
+      return NULL;
+    }
+  }
+  void add(process_T *proc)
+  {
+    this->proc_arrives(this, proc);
+  }
   friend int main(int argc, char **argv);
-};
-
-
-class SimTimeQuantum {
-public:
-  SimTimeQuantum(uint time_q)
-    : m_time_quantum(time_q)
-  {}
-protected:
-  uint m_time_quantum;
-};
-
-
-class SimulatorMFQS : public Simulator<ProcessMFQS>,
-                      SimTimeQuantum {
-public:
-  SimulatorMFQS(uint num_queues,
-                uint time_q,
-                std::istream &proc_stream = std::cin)
-    : Simulator(proc_stream),
-      SimTimeQuantum(time_q),
-      m_queues(num_queues)
-  {}
-  virtual ~SimulatorMFQS();
-protected:
-  virtual ProcessMFQS *read_proc();
-  virtual void add(ProcessMFQS *proc);
-  std::vector<std::deque<ProcessMFQS*> > m_queues;
-};
-
-
-class SimulatorRTS : public Simulator<ProcessRTS> {
-public:
-  enum Type { HARD, SOFT };
-  SimulatorRTS(Type type, std::istream &proc_stream = std::cin)
-    : Simulator(proc_stream),
-      m_type(type)
-  {}
-  virtual ~SimulatorRTS() {}
-  Gallant::Signal1<SimulatorRTS*> faults; // Signals when a process
-                                          // cannot meet its deadline
-                                          // during hard RT operation.
-protected:
-  virtual ProcessRTS *read_proc();
-  virtual void add(ProcessRTS *proc);
-  const Type m_type;
-};
-
-
-class SimulatorWHS : public Simulator<ProcessWHS>, SimTimeQuantum {
-public:
-  SimulatorWHS(uint time_q, std::istream &proc_stream = std::cin)
-    : Simulator(proc_stream),
-      SimTimeQuantum(time_q)
-  {}
-  virtual ~SimulatorWHS() {}
-protected:
-  virtual ProcessWHS *read_proc();
-  virtual void add(ProcessWHS *proc);
 };
 
 #endif
