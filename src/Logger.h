@@ -6,46 +6,34 @@
 #include <Signal.h>
 #include <iostream>
 
+template <typename proc_T>
 class Logger {
 public:
-  Logger(SimulatorMFQS *sim, std::ostream &out = std::cout)
+  Logger(std::ostream &out = std::cout)
     : m_out(out)
+  {}
+  void listen_to(Simulator<proc_T> &sim)
   {
-    this->listen_to((GenericSim*)sim);
+    sim.begins.Connect(this, &Logger::begin);
+    sim.ends.Connect(this, &Logger::end);
+    sim.proc_arrives.Connect(this, &Logger::arrival);
   }
-  Logger(SimulatorRTS *sim, std::ostream &out = std::cout)
-    : m_out(out)
+  void listen_to        (proc_T *proc);
+  void run              (proc_T *proc, uint duration);
+  void exit             (proc_T *proc);
+  void tq_expire        (proc_T *proc);
+  void miss_deadline    (proc_T *proc);
+  void io               (proc_T *proc, uint duration);
+  void change_priority  (proc_T *proc, uint new_priority);
+  void change_queue     (proc_T *proc, uint new_queue);
+  void age_timer_expire (proc_T *proc);
+  void begin            (Simulator<proc_T> *sim) {}
+  void end              (Simulator<proc_T> *sim) {}
+  void arrival          (Simulator<proc_T> *sim, proc_T *proc)
   {
-    this->listen_to((GenericSim*)sim);
-    sim->faults.Connect(this, &Logger::fault);
+    this->m_out << "arrived: " << proc->pid() << std::endl;
   }
-  Logger(SimulatorWHS *sim, std::ostream &out = std::cout)
-    : m_out(out)
-  {
-    this->listen_to((GenericSim*)sim);
-  }
-private:
-  void listen_to(GenericSim *sim)
-  {
-    sim->begins.Connect(this, &Logger::begin);
-    sim->ends.Connect(this, &Logger::end);
-    sim->proc_arrives.Connect(this, &Logger::arrival);
-  }
-  void listen_to(ProcessMFQS *proc);
-  void listen_to(ProcessRTS *proc);
-  void listen_to(ProcessWHS *proc);
-  void run(Process *proc, uint duration);
-  void exit(Process *proc);
-  void tq_expire(Process *proc);
-  void miss_deadline(Process *proc);
-  void io(Process *proc, uint duration);
-  void change_priority(Process *proc, uint new_priority);
-  void change_queue(Process *proc, uint new_queue);
-  void age_timer_expire(Process *proc);
-  void begin(GenericSim *sim);
-  void end(GenericSim *sim);
-  void arrival(GenericSim *sim, Process *proc);
-  void fault(SimulatorRTS *sim);
+  void fault            (Simulator<proc_T> *sim);
   std::ostream &m_out;
 };
 
