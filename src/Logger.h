@@ -6,7 +6,7 @@
 #include <Signal.h>
 #include <iostream>
 
-template <typename process_T>
+template <class process_T>
 class Logger {
 public:
   Logger(Simulator<process_T> &sim, std::ostream &out = std::cout)

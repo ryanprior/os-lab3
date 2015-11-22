@@ -10,7 +10,7 @@
 #include <iostream>
 
 
-template <typename process_T>
+template <class process_T>
 class Simulator {
 public:
   Simulator(Scheduler<process_T> &scheduler, std::istream &proc_stream = std::cin)
