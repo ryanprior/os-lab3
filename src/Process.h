@@ -5,8 +5,10 @@
 #include <Signal.h>
 #include <iostream>
 #include <string>
+#include <sstream>
 
 
+template <class process_T>
 class Process {
 public:
   explicit Process(uint pid,
@@ -22,15 +24,25 @@ public:
       m_pc(0)
   {}
   virtual ~Process() {}
-  Gallant::Signal2<Process*, uint> runs;  // Signals with total run
-                                          // time when process runs.
-  Gallant::Signal1<Process*> exits;       // Signals on exit.
+  Gallant::Signal2<process_T*, uint> runs;  // Signals with total run
+                                            // time when process runs.
+  Gallant::Signal1<process_T*> exits;       // Signals on exit.
   virtual void Run(uint time_q, uint cpu_time) = 0;
   inline const uint& pid() const { return this->m_pid; }
   inline const uint& arrival() const { return this->m_arrival; }
-  friend std::ostream &operator<<(std::ostream &out, const Process &proc);
+  friend std::ostream &operator<<(std::ostream &out, const process_T &proc) {
+    out << "proc " << proc.ToString();
+    return out;
+  }
 protected:
-  virtual const std::string ToString() const;
+  virtual const std::string ToString() const {
+    std::stringstream result;
+    result << "pid=" << this->m_pid
+           << " bst=" << this->m_burst
+           << " arr=" << this->m_arrival
+           << " pri=" << this->m_priority;
+    return result.str();
+  }
   const uint m_pid;        // process id for external reference
   const uint m_burst;      // total run time
   const uint m_arrival;    // clock cycle of arrival
@@ -41,25 +53,30 @@ protected:
 
 class ProcAge {
 public:
-  explicit ProcAge()
-    : m_last_cycle(0)
-  {}
   inline const uint& last_cycle() const;
   void reset_last_cycle(uint new_last_cycle);
 protected:
+  explicit ProcAge()
+    : m_last_cycle(0)
+  {}
   uint m_last_cycle; // Last cycle this process spent on the cpu
 };
 
 
+template <class process_T>
 class ProcTimeQuantum {
 public:
-  Gallant::Signal1<Process*> tq_expires; // Signals when the proc runs
-                                         // to the end of its given
-                                         // time quantum.
+  Gallant::Signal1<process_T*> tq_expires; // Signals when the proc
+                                           // runs to the end of its
+                                           // given time quantum.
+protected:
+  explicit ProcTimeQuantum() {}
 };
 
 
-class ProcessMFQS : public Process, ProcAge, ProcTimeQuantum {
+class ProcessMFQS : public Process<ProcessMFQS>,
+                    public ProcAge,
+                    public ProcTimeQuantum<ProcessMFQS> {
 public:
   ProcessMFQS(uint pid,
               uint burst,
@@ -77,7 +94,7 @@ protected:
 };
 
 
-class ProcessRTS : public Process {
+class ProcessRTS : public Process<ProcessRTS> {
 public:
   ProcessRTS(uint pid,
              uint burst,
@@ -98,7 +115,9 @@ protected:
 };
 
 
-class ProcessWHS : public Process, ProcAge, ProcTimeQuantum {
+class ProcessWHS : public Process<ProcessWHS>,
+                   public ProcAge,
+                   public ProcTimeQuantum<ProcessWHS> {
 public:
   ProcessWHS(uint pid,
              uint burst,
