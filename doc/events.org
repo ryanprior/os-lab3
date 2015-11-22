@@ -1,0 +1,14 @@
+#+TITLE: Format of event log
+
+* Events
+- r :: run
+- < :: arrival
+- > :: exit
+- x :: time quantum expire
+- ! :: miss deadline
+- @ :: i/o
+- # :: change priority
+- ~ :: change queue
+- a :: age timer expire
+- [ :: simulation begin
+- ] :: simulation end
