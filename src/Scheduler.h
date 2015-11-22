@@ -3,13 +3,17 @@
 #define SCHEDULER_H
 
 #include "Process.h"
-
-template<class process_T> class Scheduler;
-typedef Scheduler<Process> GenericScheduler;
+#include <Signal.h>
 
+
 template <class process_T>
 class Scheduler {
 public:
+  Gallant::Signal2<process_T*, uint> changes_queue; // Signals with
+                                                    // process and new
+                                                    // queue.
+  Gallant::Signal1<process_T*> ages; // Signals when process age timer
+                                     // expires.
   virtual process_T *NextProcess() = 0;
   virtual ~Scheduler() {}
   virtual void Add(process_T *proc) = 0;
