@@ -25,13 +25,20 @@ public:
   Gallant::Signal2<Simulator<process_T>*, process_T*> proc_arrives;
     // Signals with pid when the clock reaches a process's arrival
     // time and it is added to the simulation.
+  const inline uint &cpu_time() const { return this->m_cpu_time; }
+  void Start() {
+    this->begins(this);
+    while(this->read_proc()) {
+      add(this->m_next_arrival);
+    }
+    this->ends(this);
+  }
 protected:
   std::istream &m_proc_stream;
   uint m_cpu_time;
   process_T *m_next_arrival;
   Scheduler<process_T> &m_scheduler;
-  process_T *read_proc()
-  {
+  process_T *read_proc() {
     uint pid, bst, arr, pri, dln, io;
     if(this->m_proc_stream >> pid >> bst >> arr >> pri >> dln >> io) {
       this->m_next_arrival = new process_T(pid, bst, arr, pri, dln, io);
@@ -40,11 +47,10 @@ protected:
       return NULL;
     }
   }
-  void add(process_T *proc)
-  {
+  void add(process_T *proc) {
+    this->m_scheduler.Add(proc);
     this->proc_arrives(this, proc);
   }
-  friend int main(int argc, char **argv);
 };
 
 #endif

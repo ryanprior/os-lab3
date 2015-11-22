@@ -11,9 +11,10 @@ template <typename proc_T>
 class Scheduler {
 public:
   virtual proc_T *NextProcess() = 0;
+  virtual ~Scheduler() {}
+  virtual void Add(proc_T *proc) = 0;
 protected:
   explicit Scheduler() {}
-  virtual ~Scheduler() {}
 };
 
 

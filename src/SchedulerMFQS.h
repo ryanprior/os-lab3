@@ -16,6 +16,7 @@ public:
   {}
   virtual ~SchedulerMFQS();
   virtual ProcessMFQS *NextProcess();
+  virtual void Add(ProcessMFQS *proc);
 protected:
   std::vector<std::deque<ProcessMFQS*> > m_queues;
 };

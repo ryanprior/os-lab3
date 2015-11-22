@@ -22,3 +22,7 @@ ProcessMFQS *SchedulerMFQS::NextProcess() {
     }
   return result;
 }
+
+void SchedulerMFQS::Add(ProcessMFQS *proc) {
+  this->m_queues.front().push_back(proc);
+}

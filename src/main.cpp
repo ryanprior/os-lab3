@@ -18,14 +18,12 @@ int main(int argc, char **argv) {
     if(type == "mfqs") {
       uint num_queues = 3;
       uint time_q = 10;
-      SchedulerMFQS scheduler(num_queues, time_q);
-      Simulator<ProcessMFQS> sim(scheduler);
-      Logger<ProcessMFQS> logger;
-      logger.listen_to(sim);
-      while(sim.read_proc()) {
-        cout << "read: " << sim.m_next_arrival << endl;
-        sim.add(sim.m_next_arrival);
-      }
+      SchedulerMFQS *scheduler = new SchedulerMFQS(num_queues, time_q);
+      Simulator<ProcessMFQS> sim(*scheduler);
+      Logger<ProcessMFQS> logger(sim);
+      logger.Listen();
+      sim.Start();
+      delete scheduler;
     } else if(type == "rts") {
       cout << "rts unimplemented ¯\\_(ツ)_/¯" << endl;
       exit(1);

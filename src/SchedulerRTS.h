@@ -7,6 +7,7 @@
 
 class SchedulerRTS : public Scheduler<ProcessRTS> {
 public:
+  virtual ~SchedulerRTS() {}
   virtual ProcessRTS *NextProcess();
 };
 
