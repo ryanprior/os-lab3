@@ -28,8 +28,14 @@ public:
   const inline uint &cpu_time() const { return this->m_cpu_time; }
   void Start() {
     this->begins(this);
-    while(this->read_proc()) {
-      add(this->m_next_arrival);
+    for(read_proc(); m_next_arrival != NULL;) {
+      uint next_arrival_interrupt = m_next_arrival->arrival();
+      for(m_cpu_time = next_arrival_interrupt;
+          m_next_arrival &&
+            m_next_arrival->arrival() == next_arrival_interrupt;
+          read_proc()) {
+        add(m_next_arrival);
+      }
     }
     this->ends(this);
   }
@@ -44,8 +50,9 @@ protected:
       this->m_next_arrival = new process_T(pid, bst, arr, pri, dln, io);
       return this->m_next_arrival;
     } else {
-      return NULL;
+      this->m_next_arrival = NULL;
     }
+    return this->m_next_arrival;
   }
   void add(process_T *proc) {
     this->m_scheduler.Add(proc);
