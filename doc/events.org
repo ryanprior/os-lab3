@@ -29,3 +29,4 @@ An event message consists of the following, each separated by a single space:
 - a :: age timer expire
 - [ :: simulation begin
 - ] :: simulation end
+- F :: simulation faults
