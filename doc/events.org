@@ -1,5 +1,22 @@
 #+TITLE: Format of event log
 
+* Anatomy of an event message
+
+An event message consists of the following, each separated by a single space:
+1. the simulaton's CPU time
+2. the event code (see below)
+3. the pid, if applicable
+4. other event data, if appropriate
+
+#+BEGIN_EXAMPLE
+155 < 45     # pid 45 arrives at cycle 155
+155 r 45 9   # pid 45 runs for 9 cycles
+160 < 82     # pid 82 arrives at cycle 160
+164 > 45     # pid 45 exits at cycle 164
+164 r 82 10  # pid 82 runs for 10 cycles
+174 x 82     # pid 82's time quantum expires
+#+END_EXAMPLE
+
 * Events
 - r :: run
 - < :: arrival
