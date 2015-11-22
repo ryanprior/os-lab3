@@ -4,15 +4,15 @@
 
 #include "Process.h"
 
-template<typename proc_T> class Scheduler;
+template<typename process_T> class Scheduler;
 typedef Scheduler<Process> GenericScheduler;
 
-template <typename proc_T>
+template <typename process_T>
 class Scheduler {
 public:
-  virtual proc_T *NextProcess() = 0;
+  virtual process_T *NextProcess() = 0;
   virtual ~Scheduler() {}
-  virtual void Add(proc_T *proc) = 0;
+  virtual void Add(process_T *proc) = 0;
 protected:
   explicit Scheduler() {}
 };
