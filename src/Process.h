@@ -84,7 +84,7 @@ public:
               uint priority,
               uint deadline,
               uint io)
-    : Process(pid, burst, arrival, priority, 0, 0),
+    : Process<ProcessMFQS>(pid, burst, arrival, priority, 0, 0),
       ProcAge()
   {}
   virtual ~ProcessMFQS() {}
@@ -102,11 +102,11 @@ public:
              uint priority,
              uint deadline,
              uint io)
-    : Process(pid, burst, arrival, priority, 0, 0),
+    : Process<ProcessRTS>(pid, burst, arrival, priority, 0, 0),
       m_deadline(deadline)
   {}
   virtual ~ProcessRTS() {}
-  Gallant::Signal1<Process*> misses_deadline; // Signals when process
+  Gallant::Signal1<ProcessRTS*> misses_deadline; // Signals when process
                                               // misses its deadline.
   virtual void Run(uint time_q, uint cpu_time);
 protected:
@@ -125,14 +125,14 @@ public:
              uint priority,
              uint deadline,
              uint io)
-    : Process(pid, burst, arrival, priority, 0, 0),
+    : Process<ProcessWHS>(pid, burst, arrival, priority, 0, 0),
       ProcAge(),
       m_io(io)
   {}
   virtual ~ProcessWHS() {}
-  Gallant::Signal2<Process*, uint>
+  Gallant::Signal2<ProcessWHS*, uint>
   does_io; // Signals with duration when the process begins doing I/O.
-  Gallant::Signal2<Process*, uint>
+  Gallant::Signal2<ProcessWHS*, uint>
   changes_priority; // Signals with new priority.
   virtual void Run(uint time_q, uint cpu_time);
   void set_priority(uint new_priority);

@@ -74,12 +74,12 @@ protected:
 class LoggerMFQS : public Logger<ProcessMFQS> {
 public:
   virtual void listen_to(SchedulerMFQS *scheduler) {
-    scheduler->changes_queue.Connect(this, &Logger::change_queue);
-    scheduler->ages.Connect(this, &Logger::age_timer_expire);
+    scheduler->changes_queue.Connect(this, &Logger<ProcessMFQS>::change_queue);
+    scheduler->ages.Connect(this, &Logger<ProcessMFQS>::age_timer_expire);
   }
   virtual void listen_to (ProcessMFQS *proc) {
-    Logger::listen_to(proc);
-    proc->tq_expires.Connect(this, &Logger::tq_expire); 
+    Logger<ProcessMFQS>::listen_to(proc);
+    proc->tq_expires.Connect(this, &Logger<ProcessMFQS>::tq_expire); 
   }
 };
 

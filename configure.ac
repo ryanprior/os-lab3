@@ -3,6 +3,7 @@ AM_INIT_AUTOMAKE([foreign -Wall])
 
 AC_LANG([C++])
 AX_CXX_COMPILE_STDCXX_11
+CXXFLAGS="$CXXFLAGS -std=c++0x"
 AC_PROG_CXX
 
 

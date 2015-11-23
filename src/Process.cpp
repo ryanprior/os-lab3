@@ -32,7 +32,7 @@ void ProcessMFQS::Run(uint time_q, uint cpu_time) {
 }
 const std::string ProcessMFQS::ToString() const {
   std::stringstream result;
-  result << "MFQS " << Process::ToString()
+  result << "MFQS " << Process<ProcessMFQS>::ToString()
          << " lst=" << this->m_last_cycle;
   return result.str();
 }
@@ -61,7 +61,7 @@ void ProcessRTS::Run(uint time_q, uint cpu_time) {
 }
 const std::string ProcessRTS::ToString() const {
   std::stringstream result;
-  result << "RTS " << Process::ToString()
+  result << "RTS " << Process<ProcessRTS>::ToString()
          << " dln=" << this->m_deadline;
   return result.str();
 }
@@ -98,7 +98,7 @@ void ProcessWHS::set_priority(uint new_priority) {
 }
 const std::string ProcessWHS::ToString() const {
   std::stringstream result;
-  result << "WHF " << Process::ToString()
+  result << "WHF " << Process<ProcessWHS>::ToString()
          << " i/o=" << this->m_io;
   return result.str();
 }
