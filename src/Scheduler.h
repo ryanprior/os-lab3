@@ -16,7 +16,10 @@ public:
                                      // expires.
   virtual process_T *NextProcess() = 0;
   virtual ~Scheduler() {}
-  virtual void Add(process_T *proc) = 0;
+  virtual void Add(uint cpu_time, process_T *proc) = 0;
+  virtual uint NextEventTime(uint cpu_time) = 0;
+  virtual void DispatchEvent(uint cpu_time) = 0;
+  const virtual inline bool preemptive() const { return false; }
 protected:
   explicit Scheduler() {}
 };

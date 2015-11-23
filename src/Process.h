@@ -28,7 +28,7 @@ public:
                                             // time when process runs.
   Gallant::Signal1<process_T*> exits;       // Signals on exit.
   virtual void Run(uint time_q, uint cpu_time) = 0;
-  inline const uint& pid() const { return this->m_pid; }
+  virtual inline const uint& pid() const { return this->m_pid; }
   inline const uint& arrival() const { return this->m_arrival; }
   friend std::ostream &operator<<(std::ostream &out, const process_T &proc) {
     out << "proc " << proc.ToString();
@@ -89,6 +89,7 @@ public:
   {}
   virtual ~ProcessMFQS() {}
   virtual void Run(uint time_q, uint cpu_time);
+  static bool CompareAge(const ProcessMFQS &first, const ProcessMFQS &second);
 protected:
   virtual const std::string ToString() const;
 };

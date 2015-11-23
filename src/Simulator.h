@@ -29,12 +29,14 @@ public:
   void Start() {
     this->begins(this);
     for(read_proc(); m_next_arrival != NULL;) {
-      uint next_arrival_interrupt = m_next_arrival->arrival();
-      for(m_cpu_time = next_arrival_interrupt;
-          m_next_arrival &&
-            m_next_arrival->arrival() == next_arrival_interrupt;
-          read_proc()) {
+      uint next_arrival_time = m_next_arrival->arrival();
+      uint next_scheduler_event_time = m_scheduler.NextEventTime(m_cpu_time);
+      if(next_arrival_time < next_scheduler_event_time) {
+        m_cpu_time = next_arrival_time;
         add(m_next_arrival);
+        read_proc();
+      } else {
+        m_scheduler.DispatchEvent(m_cpu_time);
       }
     }
     this->ends(this);
@@ -55,7 +57,7 @@ protected:
     return this->m_next_arrival;
   }
   void add(process_T *proc) {
-    this->m_scheduler.Add(proc);
+    this->m_scheduler.Add(m_cpu_time, proc);
     this->proc_arrives(this, proc);
   }
 };

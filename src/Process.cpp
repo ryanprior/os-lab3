@@ -36,6 +36,20 @@ const std::string ProcessMFQS::ToString() const {
          << " lst=" << this->m_last_cycle;
   return result.str();
 }
+bool ProcessMFQS::CompareAge(const ProcessMFQS &first, const ProcessMFQS &second) {
+  bool result;
+  if(first.last_cycle() < second.last_cycle()) {
+    result = true;
+  } else {
+    if(first.last_cycle() == second.last_cycle()) {
+      result = first.pid() < second.pid();
+    } else {
+      result = false;
+    }
+  }
+  return result;
+}
+
 
 
 /*

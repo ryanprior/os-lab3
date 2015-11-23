@@ -23,6 +23,15 @@ ProcessMFQS *SchedulerMFQS::NextProcess() {
   return result;
 }
 
-void SchedulerMFQS::Add(ProcessMFQS *proc) {
+void SchedulerMFQS::Add(uint cpu_time, ProcessMFQS *proc) {
+  proc->reset_last_cycle(cpu_time);
   this->m_queues.front().push_back(proc);
+}
+
+uint SchedulerMFQS::NextEventTime(uint cpu_time) {
+  return 0;
+}
+
+void SchedulerMFQS::DispatchEvent(uint cpu_time) {
+  return;
 }
