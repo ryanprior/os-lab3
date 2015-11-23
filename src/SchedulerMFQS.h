@@ -17,14 +17,12 @@ public:
       m_processes_by_age()
   {}
   virtual ~SchedulerMFQS();
-  virtual ProcessMFQS *NextProcess();
   virtual void Add(uint cpu_time, ProcessMFQS *proc);
   virtual uint NextEventTime(uint cpu_time);
   virtual void DispatchEvent(uint cpu_time);
-
 protected:
   std::vector<std::deque<ProcessMFQS*> > m_queues;
-  std::set<ProcessMFQS*> m_processes_by_age;
+  std::set<ProcessMFQS*, ProcessMFQS::compare_by_age> m_processes_by_age;
 };
 
 #endif

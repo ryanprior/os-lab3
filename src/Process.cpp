@@ -3,17 +3,6 @@
 
 
 /*
- * ProcAge
- */
-inline const uint& ProcAge::last_cycle() const {
-  return this->m_last_cycle;
-}
-void ProcAge::reset_last_cycle(uint new_last_cycle) {
-  this->m_last_cycle = new_last_cycle;
-}
-
-
-/*
  * ProcessMFQS
  */
 void ProcessMFQS::Run(uint time_q, uint cpu_time) {
@@ -36,20 +25,6 @@ const std::string ProcessMFQS::ToString() const {
          << " lst=" << this->m_last_cycle;
   return result.str();
 }
-bool ProcessMFQS::CompareAge(const ProcessMFQS &first, const ProcessMFQS &second) {
-  bool result;
-  if(first.last_cycle() < second.last_cycle()) {
-    result = true;
-  } else {
-    if(first.last_cycle() == second.last_cycle()) {
-      result = first.pid() < second.pid();
-    } else {
-      result = false;
-    }
-  }
-  return result;
-}
-
 
 
 /*

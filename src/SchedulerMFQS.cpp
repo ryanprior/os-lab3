@@ -9,23 +9,10 @@ SchedulerMFQS::~SchedulerMFQS() {
   }
 }
 
-ProcessMFQS *SchedulerMFQS::NextProcess() {
-  ProcessMFQS *result = NULL;
-  for(auto i=this->m_queues.begin();
-      !result && i != this->m_queues.end();
-      ++i)
-    {
-      if(!i->empty()) {
-        result = i->front();
-        i->pop_front();
-      }
-    }
-  return result;
-}
-
 void SchedulerMFQS::Add(uint cpu_time, ProcessMFQS *proc) {
   proc->reset_last_cycle(cpu_time);
   this->m_queues.front().push_back(proc);
+  this->m_processes_by_age.insert(proc);
 }
 
 uint SchedulerMFQS::NextEventTime(uint cpu_time) {

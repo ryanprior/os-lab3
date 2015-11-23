@@ -53,8 +53,12 @@ protected:
 
 class ProcAge {
 public:
-  inline const uint& last_cycle() const;
-  void reset_last_cycle(uint new_last_cycle);
+  virtual inline const uint& last_cycle() const {
+    return this->m_last_cycle;
+  }
+  void reset_last_cycle(uint new_last_cycle) {
+    this->m_last_cycle = new_last_cycle;
+  }
 protected:
   explicit ProcAge()
     : m_last_cycle(0)
@@ -89,7 +93,21 @@ public:
   {}
   virtual ~ProcessMFQS() {}
   virtual void Run(uint time_q, uint cpu_time);
-  static bool CompareAge(const ProcessMFQS &first, const ProcessMFQS &second);
+  struct compare_by_age {
+    bool operator() (const ProcessMFQS *lhs, const ProcessMFQS *rhs) const {
+      bool result;
+      if(lhs->last_cycle() < rhs->last_cycle()) {
+        result = true;
+      } else {
+        if(lhs->last_cycle() == rhs->last_cycle()) {
+          result = lhs->pid() < rhs->pid();
+        } else {
+          result = false;
+        }
+      }
+      return result;
+    }
+  };
 protected:
   virtual const std::string ToString() const;
 };
