@@ -11,7 +11,7 @@ include/Signals/Signal.h:
 
 build/Makefile: configure
 	@mkdir -p build
-	cd build && ../configure
+	cd build && ../configure CPPFLAGS=-DDEBUG CXXFLAGS="-g -O0"
 
 configure: configure.ac Makefile.am
 	autoreconf -is
