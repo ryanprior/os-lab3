@@ -30,13 +30,29 @@ public:
                                             // deletion.
   virtual void Run(uint run_time, uint time_q, uint cpu_time) = 0;
   inline const uint& pid() const { return this->m_pid; }
+  inline const uint& arrival() const { return m_arrival; }
+  inline const uint& priority() const { return this->priority; }
   virtual inline const uint
   time_remaining(uint cpu_time) const { return m_burst - m_pc; }
-  inline const uint& arrival() const { return m_arrival; }
   friend std::ostream &operator<<(std::ostream &out, const process_T &proc) {
     out << "proc " << proc.ToString();
     return out;
   }
+  struct compare_by_priority {
+    bool operator() (const process_T *lhs, const process_T *rhs) const {
+      bool result;
+      if(lhs->priority() > rhs->priority()) {
+        result = true;
+      } else {
+        if(lhs->last_cycle() == rhs->last_cycle()) {
+          result = lhs->pid() < rhs->pid();
+        } else {
+          result = false;
+        }
+      }
+      return result;
+    }
+  };
 protected:
   virtual const std::string ToString() const {
     std::stringstream result;
@@ -177,6 +193,21 @@ public:
   changes_priority; // Signals with new priority.
   virtual void Run(uint run_time, uint time_q, uint cpu_time);
   void set_priority(uint new_priority);
+  struct compare_by_age {
+    bool operator() (const ProcessMFQS *lhs, const ProcessMFQS *rhs) const {
+      bool result;
+      if(lhs->last_cycle() < rhs->last_cycle()) {
+        result = true;
+      } else {
+        if(lhs->last_cycle() == rhs->last_cycle()) {
+          result = lhs->pid() < rhs->pid();
+        } else {
+          result = false;
+        }
+      }
+      return result;
+    }
+  };
 protected:
   virtual const std::string ToString() const;
   const uint m_io;         // length of i/o in cycles (0 if no i/o)

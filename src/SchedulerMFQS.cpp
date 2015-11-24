@@ -27,7 +27,7 @@ void SchedulerMFQS::Add(uint cpu_time, ProcessMFQS *proc) {
 }
 
 uint SchedulerMFQS::NextEventTime(uint cpu_time) const {
-  const int max = std::numeric_limits<uint>::max();
+  const uint max = std::numeric_limits<uint>::max();
   uint result = max;
   int i = first_non_empty_queue_index();
   if(i >= 0 && !m_proc_running && !m_proc_just_stopped) {
