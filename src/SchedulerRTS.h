@@ -8,18 +8,22 @@
 
 class SchedulerRTS : public Scheduler<ProcessRTS> {
 public:
-	SchedulerRTS(bool hardmode)
-    r_queue,
-    hardmode,
+  SchedulerRTS(bool hardmode)
+    : r_queue(),
+      r_hardmode(hardmode)
   {}
-  virtual ~SchedulerRTS() {}
-  virtual void Add(uint cpu_time, ProcessMFQS *proc);
+  virtual ~SchedulerRTS();
+  virtual void Add(uint cpu_time, ProcessRTS *proc);
   virtual ProcessRTS *NextProcess();
   virtual uint NextEventTime(uint cpu_time) const;
   virtual void DispatchEvent(uint cpu_time);
+  virtual void AdvanceTime(uint old_time, uint new_time);
+  virtual bool Empty() const;
 protected:
-  bool hardmode;
-  std::set<ProcessMFQS*, ProcessMFQS::compare_by_deadline> r_queue
+  virtual void handle_proc_stop(ProcessRTS *proc);
+  virtual void run_proc(ProcessRTS *proc, uint run_time, uint cpu_time);
+  const bool r_hardmode;
+  std::set<ProcessRTS*, ProcessRTS::compare_by_deadline> r_queue;
 };
 
 #endif
