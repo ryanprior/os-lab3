@@ -1,27 +1,27 @@
 #include "SchedulerRTS.h"
 
 SchedulerRTS::~SchedulerRTS() {
-    while(!r_queue->empty()) {
-      delete r_queue->front();
-      r_queue->pop_front();
-    }
+    r_queue.clear();
   }
 }
 
 ProcessRTS *SchedulerRTS::NextProcess() {
   ProcessRTS *result = NULL;
-  if(!r_queue->empty()) {
-    result = r_queue->front();
-    r_queue->pop_front();
+  if(!r_queue.empty()) {
+	result = r_queue.begin();
+    r_queue.erase(result);
   }   
   return result;
 }
 
 void SchedulerRTS::Add(uint cpu_time, ProcessRTS *proc) {
-  this->r_queue.front().push_back(proc);
+  //update cpu_time on current running process?
+  //preempt process in queue to dispatch next process
+  r_queue.insert(proc);
 }
 
 uint SchedulerRTS::NextEventTime(uint cpu_time) {
+  //TODO: pull remaining runtime from process at r_queue.begin();
   return 0;
 }
 
