@@ -134,6 +134,21 @@ public:
                                                  // deadline.
   virtual void Run(uint run_time, uint time_q, uint cpu_time);
   virtual inline const uint time_remaining(uint cpu_time) const;
+  struct compare_by_deadline {
+    bool operator() (const ProcessRTS *lhs, const ProcessRTS *rhs) const {
+      bool result;
+      if(lhs->m_deadline < rhs->m_deadline) {
+        result = true;
+      } else {
+        if(lhs->m_deadline < rhs->m_deadline) {
+          result = lhs->pid() < rhs->pid();
+        } else {
+          result = false;
+        }
+      }
+      return result;
+    }
+  };
 protected:
   virtual const std::string ToString() const;
   const uint m_deadline;   // last cycle this process is allowed to run
