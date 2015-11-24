@@ -19,10 +19,16 @@ public:
     this->m_sim.ends.Connect(this, &Logger::end);
     this->m_sim.proc_arrives.Connect(this, &Logger::arrival);
     this->m_sim.proc_arrives.Connect(this, &Logger::listen_to);
+    this->m_sim.begins.Connect(this, &Logger::listen_to);
+
   }
   virtual void listen_to (process_T *proc) {
     proc->runs.Connect(this, &Logger::run);
     proc->exits.Connect(this, &Logger::exit);
+  }
+  virtual void listen_to (Scheduler<process_T> *scheduler) {
+    scheduler->changes_queue.Connect(this, &Logger::change_queue);
+    scheduler->ages.Connect(this, &Logger::age_timer_expire);
   }
   void run (process_T *proc, uint duration) {
     this->e('r', proc) << ' ' << duration << std::endl;
@@ -48,10 +54,10 @@ public:
   void age_timer_expire (process_T *proc) {
     this->e('a', proc) << std::endl;
   }
-  void begin (Simulator<process_T> *sim) {
+  void begin (Scheduler<process_T> *sim) {
     this->e('[') << std::endl;
   }
-  void end (Simulator<process_T> *sim) {
+  void end (Scheduler<process_T> *sim) {
     this->e(']') << std::endl;
   }
   void arrival (process_T *proc) {
@@ -83,7 +89,7 @@ public:
   }
   virtual void listen_to (ProcessMFQS *proc) {
     Logger<ProcessMFQS>::listen_to(proc);
-    proc->tq_expires.Connect(this, &Logger<ProcessMFQS>::tq_expire); 
+    proc->tq_expires.Connect(this, &Logger<ProcessMFQS>::tq_expire);
   }
 };
 
