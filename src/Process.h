@@ -3,8 +3,6 @@
 #define PROCESS_H
 
 #include <Signal.h>
-#include <iostream>
-#include <string>
 #include <sstream>
 
 
@@ -21,17 +19,20 @@ public:
       m_burst(burst),
       m_arrival(arrival),
       m_priority(priority),
-      m_pc(0)
+      m_pc(0),
+      m_running(false)
   {}
   virtual ~Process() {}
   Gallant::Signal2<process_T*, uint> runs;  // Signals with total run
                                             // time when process runs.
   Gallant::Signal1<process_T*> exits;       // Signals on exit.
-  virtual void Run(uint time_q, uint cpu_time) = 0;
-  virtual inline const uint& pid() const { return this->m_pid; }
-  inline const uint& arrival() const { return this->m_arrival; }
   Gallant::Signal1<process_T*> dispose;     // Signals ready for
                                             // deletion.
+  virtual void Run(uint run_time, uint time_q, uint cpu_time) = 0;
+  inline const uint& pid() const { return this->m_pid; }
+  virtual inline const uint
+  time_remaining(uint cpu_time) const { return m_burst - m_pc; }
+  inline const uint& arrival() const { return m_arrival; }
   friend std::ostream &operator<<(std::ostream &out, const process_T &proc) {
     out << "proc " << proc.ToString();
     return out;
@@ -50,6 +51,7 @@ protected:
   const uint m_arrival;    // clock cycle of arrival
         uint m_priority;   // priority (^ priority has ^ number)
         uint m_pc;         // program counter
+        bool m_running;    // true if the process is running
 };
 
 
@@ -94,7 +96,7 @@ public:
       ProcAge()
   {}
   virtual ~ProcessMFQS() {}
-  virtual void Run(uint time_q, uint cpu_time);
+  virtual void Run(uint run_time, uint time_q, uint cpu_time);
   struct compare_by_age {
     bool operator() (const ProcessMFQS *lhs, const ProcessMFQS *rhs) const {
       bool result;
@@ -127,9 +129,11 @@ public:
       m_deadline(deadline)
   {}
   virtual ~ProcessRTS() {}
-  Gallant::Signal1<ProcessRTS*> misses_deadline; // Signals when process
-                                              // misses its deadline.
-  virtual void Run(uint time_q, uint cpu_time);
+  Gallant::Signal1<ProcessRTS*> misses_deadline; // Signals when
+                                                 // process misses its
+                                                 // deadline.
+  virtual void Run(uint run_time, uint time_q, uint cpu_time);
+  virtual inline const uint time_remaining(uint cpu_time) const;
 protected:
   virtual const std::string ToString() const;
   const uint m_deadline;   // last cycle this process is allowed to run
@@ -155,7 +159,7 @@ public:
   does_io; // Signals with duration when the process begins doing I/O.
   Gallant::Signal2<ProcessWHS*, uint>
   changes_priority; // Signals with new priority.
-  virtual void Run(uint time_q, uint cpu_time);
+  virtual void Run(uint run_time, uint time_q, uint cpu_time);
   void set_priority(uint new_priority);
 protected:
   virtual const std::string ToString() const;
