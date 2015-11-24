@@ -10,7 +10,7 @@
 template <class process_T>
 class Logger {
 public:
-  Logger(Simulator<process_T> &sim, std::ostream &out = std::cout)
+  explicit Logger(Simulator<process_T> &sim, std::ostream &out = std::cout)
     : m_out(out),
       m_sim(sim)
   {}
@@ -18,6 +18,7 @@ public:
     this->m_sim.begins.Connect(this, &Logger::begin);
     this->m_sim.ends.Connect(this, &Logger::end);
     this->m_sim.proc_arrives.Connect(this, &Logger::arrival);
+    this->m_sim.proc_arrives.Connect(this, &Logger::listen_to);
   }
   virtual void listen_to (process_T *proc) {
     proc->runs.Connect(this, &Logger::run);
@@ -53,7 +54,7 @@ public:
   void end (Simulator<process_T> *sim) {
     this->e(']') << std::endl;
   }
-  void arrival (Simulator<process_T> *sim, process_T *proc) {
+  void arrival (process_T *proc) {
     this->e('<', proc) << std::endl;
   }
   void fault (Simulator<process_T> *sim) {
@@ -73,6 +74,9 @@ protected:
 
 class LoggerMFQS : public Logger<ProcessMFQS> {
 public:
+  LoggerMFQS(Simulator<ProcessMFQS> &sim)
+    : Logger<ProcessMFQS>(sim)
+  {}
   virtual void listen_to(SchedulerMFQS *scheduler) {
     scheduler->changes_queue.Connect(this, &Logger<ProcessMFQS>::change_queue);
     scheduler->ages.Connect(this, &Logger<ProcessMFQS>::age_timer_expire);
