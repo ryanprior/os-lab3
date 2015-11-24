@@ -8,6 +8,7 @@
 #include <vector>
 #include <deque>
 #include <iostream>
+#include <limits>
 
 
 template <class process_T>
@@ -20,35 +21,40 @@ public:
       m_scheduler(scheduler)
   {}
   ~Simulator() {}
-  Gallant::Signal1<Simulator<process_T>*> begins;
-  Gallant::Signal1<Simulator<process_T>*> ends;
+  Gallant::Signal1<Scheduler<process_T>*> begins;
+  Gallant::Signal1<Scheduler<process_T>*> ends;
   Gallant::Signal1<process_T*> proc_arrives;
     // Signals with pid when the clock reaches a process's arrival
     // time and it is added to the simulation.
   const inline uint &cpu_time() const { return this->m_cpu_time; }
   void Start() {
-    this->begins(this);
-    for(read_proc(); m_next_arrival != NULL || !m_scheduler.empty();) {
-      uint next_arrival_time = m_next_arrival->arrival();
+    this->begins(&m_scheduler);
+    for(read_proc(); m_next_arrival != NULL || !m_scheduler.Empty();) {
+      uint next_arrival_time = std::numeric_limits<uint>::max();
+      if(m_next_arrival) {
+        next_arrival_time = m_next_arrival->arrival();
+      }
       uint next_scheduler_event_time = m_scheduler.NextEventTime(m_cpu_time);
-      if(next_arrival_time < next_scheduler_event_time) {
+      if(next_arrival_time <= next_scheduler_event_time) {
         uint time_difference = next_arrival_time - m_cpu_time;
         if(time_difference) {
-          m_scheduler.AdvanceTime(m_cpu_time, next_arrival_time);
+          uint old_time = m_cpu_time;
           m_cpu_time = next_arrival_time;
+          m_scheduler.AdvanceTime(old_time, next_arrival_time);
         }
         add(m_next_arrival);
         read_proc();
       } else {
         uint time_difference = next_scheduler_event_time - m_cpu_time;
         if(time_difference) {
-          m_scheduler.AdvanceTime(m_cpu_time, next_scheduler_event_time);
+          uint old_time = m_cpu_time;
           m_cpu_time = next_scheduler_event_time;
+          m_scheduler.AdvanceTime(old_time, next_scheduler_event_time);
         }
         m_scheduler.DispatchEvent(m_cpu_time);
       }
     }
-    this->ends(this);
+    this->ends(&m_scheduler);
   }
 protected:
   std::istream &m_proc_stream;

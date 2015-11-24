@@ -17,6 +17,7 @@ void ProcessMFQS::Run(uint run_time, uint time_q, uint cpu_time) {
   this->reset_last_cycle(cpu_time);
   if(m_pc == m_burst) {
     this->exits(this);
+    m_running = false;
     this->dispose(this);
   } else if(run_time == time_q) {
     this->tq_expires(this);

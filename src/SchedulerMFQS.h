@@ -20,14 +20,18 @@ public:
       SchedulerAge(age_time),
       m_queues(num_queues),
       m_processes_by_age(),
-      m_proc_queues()
+      m_proc_queues(),
+      m_fcfs(false)
   {}
   virtual ~SchedulerMFQS() {}
   virtual void Add(uint cpu_time, ProcessMFQS *proc);
   virtual uint NextEventTime(uint cpu_time) const;
   virtual void DispatchEvent(uint cpu_time);
   virtual void AdvanceTime(uint old_time, uint new_time);
-  virtual bool empty() const { return m_processes_by_age.empty(); }
+  virtual bool Empty() const
+  {
+    return m_proc_queues.empty();
+  }
 protected:
   int first_non_empty_queue_index() const; // -1 if all empty
   inline const uint time_q_for(uint queue) const;
@@ -37,9 +41,11 @@ protected:
   virtual void handle_proc_tq_expire(ProcessMFQS *proc);
   virtual void handle_proc_stop(ProcessMFQS *proc);
   void handle_proc_dispose(ProcessMFQS *proc);
+  virtual void run_proc(ProcessMFQS *proc, uint run_time, uint cpu_time);
   std::vector<std::deque<ProcessMFQS*> > m_queues;
   std::set<ProcessMFQS*, ProcessMFQS::compare_by_age> m_processes_by_age;
   std::map<ProcessMFQS*, uint> m_proc_queues;
+  bool m_fcfs;
 };
 
 #endif

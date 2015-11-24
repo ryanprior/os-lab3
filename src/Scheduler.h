@@ -19,13 +19,16 @@ public:
   virtual uint NextEventTime(uint cpu_time) const = 0;
   virtual void DispatchEvent(uint cpu_time) = 0;
   virtual void AdvanceTime(uint old_time, uint new_time) = 0;
-  virtual bool empty() const = 0;
-  virtual void handle_proc_stop(process_T *proc) = 0;
+  virtual bool Empty() const = 0;
 protected:
   explicit Scheduler()
-    : m_proc_running(false)
+    : m_proc_running(false),
+      m_proc_just_stopped(false)
   {}
+  virtual void handle_proc_stop(process_T *proc) = 0;
+  virtual void run_proc(process_T *proc, uint run_time, uint cpu_time) = 0;
   bool m_proc_running;
+  bool m_proc_just_stopped;
 };
 
 
