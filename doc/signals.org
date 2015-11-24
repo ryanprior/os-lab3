@@ -29,6 +29,7 @@
   | rts       | proc misses deadline     | process    |            |
   | whs       | proc does i/o            | process    | how long?  |
   | whs       | proc changes priority    | process    | to what?   |
+  | all       | proc ready for disposal  | process    |            |
   |-----------+--------------------------+------------+------------|
   | mfqs      | proc changes queue       | scheduler  | to which?  |
   | mfqs, whs | proc aging timer expires | scheduler  |            |

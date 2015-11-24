@@ -30,6 +30,8 @@ public:
   virtual void Run(uint time_q, uint cpu_time) = 0;
   virtual inline const uint& pid() const { return this->m_pid; }
   inline const uint& arrival() const { return this->m_arrival; }
+  Gallant::Signal1<process_T*> dispose;     // Signals ready for
+                                            // deletion.
   friend std::ostream &operator<<(std::ostream &out, const process_T &proc) {
     out << "proc " << proc.ToString();
     return out;

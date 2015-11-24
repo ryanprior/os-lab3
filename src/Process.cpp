@@ -1,22 +1,26 @@
 #include "Process.h"
-#include <sstream>
+#include <algorithm>
 
 
 /*
  * ProcessMFQS
  */
-void ProcessMFQS::Run(uint time_q, uint cpu_time) {
-  uint run_time = this->m_burst - this->m_pc;
-  if(run_time > time_q) {
-    run_time = time_q;
+void ProcessMFQS::Run(uint run_time, uint time_q, uint cpu_time) {
+  uint time_remaining = m_burst - m_pc;
+  run_time = std::min({run_time, time_remaining, time_q});
+  if(!m_running) {
+    m_running = true;
+    uint total_run_time = std::min(m_burst - m_pc, time_q);
+    this->runs(this, total_run_time);
   }
-  this->runs(this, run_time);
-  this->m_pc += run_time;
-  this->reset_last_cycle(cpu_time + run_time);
-  if(this->m_pc == this->m_burst) {
+  m_pc += run_time;
+  this->reset_last_cycle(cpu_time);
+  if(m_pc == m_burst) {
     this->exits(this);
-  } else {
+    this->dispose(this);
+  } else if(run_time == time_q) {
     this->tq_expires(this);
+    m_running = false;
   }
 }
 const std::string ProcessMFQS::ToString() const {
@@ -30,23 +34,24 @@ const std::string ProcessMFQS::ToString() const {
 /*
  * ProcessRTS
  */
-void ProcessRTS::Run(uint time_q, uint cpu_time) {
-  uint run_time = this->m_burst - this->m_pc;
-  if(run_time > time_q) {
-    run_time = time_q;
-  }
-  if(cpu_time + run_time <= this->m_deadline) {
-    this->runs(this, run_time);
-    this->m_pc += run_time;
-    if(this->m_pc == this->m_burst) {
-      this->exits(this);
-    }
-  } else {
-    run_time = this->m_deadline - cpu_time;
-    this->runs(this, run_time);
-    this->m_pc += run_time;
+void ProcessRTS::Run(uint run_time, uint time_q, uint cpu_time) {
+  run_time = std::min({run_time, m_burst - m_pc, time_q});
+  this->runs(this, run_time);
+  this->m_pc += run_time;
+  if(cpu_time > m_deadline) {
     this->misses_deadline(this);
+    this->dispose(this);
+  } else if(m_pc == m_burst) {
+    this->exits(this);
+    this->dispose(this);
   }
+}
+inline const uint ProcessRTS::time_remaining(uint cpu_time) const {
+  uint result = this->m_deadline - cpu_time;
+  if((m_burst - m_pc) < result) {
+    result = m_burst - m_pc;
+  }
+  return result;
 }
 const std::string ProcessRTS::ToString() const {
   std::stringstream result;
@@ -59,11 +64,8 @@ const std::string ProcessRTS::ToString() const {
 /*
  * ProcessWHS
  */
-void ProcessWHS::Run(uint time_q, uint cpu_time) {
-  uint run_time = this->m_burst - this->m_pc;
-  if(run_time > time_q) {
-    run_time = time_q;
-  }
+void ProcessWHS::Run(uint run_time, uint time_q, uint cpu_time) {
+  run_time = std::min({run_time, m_burst - m_pc, time_q});
   if(this->m_io > 0 && run_time >= time_q-1) {
     run_time = time_q - 1;
     this->runs(this, run_time);
@@ -76,6 +78,7 @@ void ProcessWHS::Run(uint time_q, uint cpu_time) {
     this->reset_last_cycle(cpu_time + run_time);
     if(this->m_pc == this->m_burst) {
       this->exits(this);
+      this->dispose(this);
     } else {
       this->tq_expires(this);
     }
