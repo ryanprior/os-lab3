@@ -46,13 +46,7 @@ void ProcessRTS::Run(uint run_time, uint time_q, uint cpu_time) {
     this->dispose(this);
   }
 }
-inline const uint ProcessRTS::time_remaining(uint cpu_time) const {
-  uint result = this->m_deadline - cpu_time;
-  if((m_burst - m_pc) < result) {
-    result = m_burst - m_pc;
-  }
-  return result;
-}
+
 const std::string ProcessRTS::ToString() const {
   std::stringstream result;
   result << "RTS " << Process<ProcessRTS>::ToString()

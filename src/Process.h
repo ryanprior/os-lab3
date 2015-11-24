@@ -133,7 +133,8 @@ public:
                                                  // process misses its
                                                  // deadline.
   virtual void Run(uint run_time, uint time_q, uint cpu_time);
-  virtual inline const uint time_remaining(uint cpu_time) const;
+  virtual inline const uint time_remaining() const{ return m_burst - m_pc;}
+  virtual inline const uint deadline() const{ return m_deadline;}
   struct compare_by_deadline {
     bool operator() (const ProcessRTS *lhs, const ProcessRTS *rhs) const {
       bool result;
